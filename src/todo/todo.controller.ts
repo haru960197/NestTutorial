@@ -1,17 +1,20 @@
 import { Controller, Get } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Controller('todo') // コントローラクラスの宣言とパスの指定(http://localhost:3000/todo)
 export class TodoController {
 
+  constructor(
+    private prisma: PrismaService
+  ){}
+
   @Get("list") // HTTPメソッドとパスの指定(http://localhost:3000/todo/list)
-  getList() {
+  async getList() {
+    const result = await this.prisma.task.findMany();
+
     // ここで return した内容が response になる
     return [
-      {
-        title: "牛乳を買いに行く",
-        due_on: "2024-05-26",
-        done: false,
-      },
+      ...result,
     ];
   }
 }
